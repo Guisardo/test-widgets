@@ -6,7 +6,7 @@ RUN apt-get update && apt-get upgrade && \
 RUN curl -sL https://deb.nodesource.com/setup | bash -
 
 RUN apt-get update && apt-get upgrade && \
-  apt-get install -y nodejs
+  apt-get install -y git nodejs
 
 RUN npm -g install npm@latest
 
@@ -16,7 +16,7 @@ RUN npm install -g bower gulp
 COPY . /usr/share/nginx/html
 RUN /bin/bash -c 'cd /usr/share/nginx/html && bower install --allow-root'
 
-RUN apt-get purge -y npm nodejs curl apt-transport-https lsb-release && \
+RUN apt-get purge -y git npm nodejs curl apt-transport-https lsb-release && \
   apt-get autoremove -y && \
   apt-get clean all
 
