@@ -32,13 +32,14 @@
         }
     </style>
     <script>
+        var elastichost = location.hostname;
         angular
             .module('tutorial', ['elasticui', 'ngWebsocket'])
-            .constant('euiHost', 'http://192.168.99.100') // ACTION: change to cluster address
+            .constant('euiHost', 'http://' + elastichost) // ACTION: change to cluster address
             .run(function($rootScope, $websocket) {
                 $rootScope.now = new Date();
 
-                var ws = $websocket.$new({'url': 'ws://192.168.99.100/ws/_changes', 'protocols': [], 'subprotocols': ['base46'] });
+                var ws = $websocket.$new({'url': 'ws://' + elastichost + '/ws/_changes', 'protocols': [], 'subprotocols': ['base46'] });
                 ws.$on('$open', function () {
                     console.log('Oh my gosh, websocket is really open! Fukken awesome!');
                 });

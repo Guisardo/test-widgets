@@ -2,15 +2,22 @@ FROM nginx
 
 # Install Node.js
 RUN apt-get update && apt-get upgrade && \
-  apt-get install -y npm
+  apt-get install -y curl
+RUN curl -sL https://deb.nodesource.com/setup | bash -
+
+RUN apt-get update && apt-get upgrade && \
+  apt-get install -y nodejs
+
+RUN npm -g install npm@latest
 
 # Install Bower & Grunt
 RUN npm install -g bower gulp
 
-RUN /bin/bash -c 'cd /usr/share/nginx/html && bower install'
+COPY . /usr/share/nginx/html
+RUN /bin/bash -c 'cd /usr/share/nginx/html && bower install --allow-root'
 
-RUN  apt-get purge -y npm && \
+RUN apt-get purge -y npm nodejs curl apt-transport-https lsb-release && \
   apt-get autoremove -y && \
   apt-get clean all
 
-COPY . /usr/share/nginx/html
+RUN rm -rf /usr/lib/node_modules
