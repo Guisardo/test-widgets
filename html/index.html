@@ -96,8 +96,8 @@
                     <div ng-repeat="doc in indexVM.results.hits.hits" ng-animate=" 'animate' ">
 <section class="glide__slide match-live slick-slide slick-current slick-active" id="{{ doc._source.matchId }}" data-slick-index="0" aria-hidden="false" tabindex="0" role="option" aria-describedby="slick-slide00"><em>{{doc._source.season.name}}</em><div class="match-item"><div class="match-home">
 <img ng-if="!doc._source.local.teamId" src="http://cdn.foxsports.com.br/foxsports/live/images/missing-team.png">
-<img ng-if="doc._source.local.teamId && doc._source.visitor.vendor == 'stats'" src="http://statistics.ficfiles.com/teams/20x20/{{doc._source.local.teamId}}.png">
-<img ng-if="doc._source.local.teamId && doc._source.visitor.vendor == 'df'" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.local.teamId}}.png">
+<img ng-if="doc._source.local.teamId && doc._source.vendor == 'stats'" src="http://statistics.ficfiles.com/teams/20x20/{{doc._source.local.teamId}}.png">
+<img ng-if="doc._source.local.teamId && doc._source.vendor == 'df'" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.local.teamId}}.png">
 <span class="match-team-name">{{doc._source.local.name[0]}}</span>
 </div>
 <div class="match-score" ng-switch ng-if="(doc._source.startat | date:'yyyyMMddHHmm') >= (now | date:'yyyyMMddHHmm')">
@@ -110,8 +110,8 @@
 </div>
 <div class="match-away">
 <img ng-if="!doc._source.visitor.teamId" src="http://cdn.foxsports.com.br/foxsports/live/images/missing-team.png">
-<img ng-if="doc._source.visitor.teamId && doc._source.visitor.vendor == 'stats'" src="http://statistics.ficfiles.com/teams/20x20/{{doc._source.visitor.teamId}}.png">
-<img ng-if="doc._source.visitor.teamId && doc._source.visitor.vendor == 'df'" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.visitor.teamId}}.png">
+<img ng-if="doc._source.visitor.teamId && doc._source.vendor == 'stats'" src="http://statistics.ficfiles.com/teams/20x20/{{doc._source.visitor.teamId}}.png">
+<img ng-if="doc._source.visitor.teamId && doc._source.vendor == 'df'" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.visitor.teamId}}.png">
 <span class="match-team-name">{{doc._source.visitor.name[0]}}</span>
 </div></div></section>
                     </div>
