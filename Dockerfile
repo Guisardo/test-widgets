@@ -13,7 +13,8 @@ RUN npm -g install npm@latest
 # Install Bower & Grunt
 RUN npm install -g bower gulp
 
-COPY ./html /usr/share/nginx/html
+COPY html /usr/share/nginx/html
+
 RUN /bin/bash -c 'cd /usr/share/nginx/html && bower install --allow-root'
 
 RUN apt-get purge -y git npm nodejs curl apt-transport-https lsb-release && \
