@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>ElasticUI Demo</title>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.foxsports.com.br/foxsports/live/styles/main.css?=6d4512aa68bc9bcfc37804840c16a5f76c55a68a">
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-i18n/angular-locale_es-ar.js"></script>
+    <script src="bower_components/elastic.js/dist/elastic.min.js"></script>
+    <script src="bower_components/elasticsearch/elasticsearch.angular.js"></script>
+    <script src="bower_components/ng-websocket/ng-websocket.js"></script>
+    <script src="bower_components/elasticui/dist/elasticui.js"></script>
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: block;
+            padding: 20px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+            border-right: 1px solid #eee;
+        }
+
+        .instructions {
+            display: block;
+            margin: 0 auto;
+            width: 450px;
+        }
+    </style>
+    <script>
+        angular
+            .module('tutorial', ['elasticui', 'ngWebsocket'])
+            .constant('euiHost', 'http://192.168.99.100') // ACTION: change to cluster address
+            .run(function($rootScope, $websocket) {
+                $rootScope.now = new Date();
+
+                var ws = $websocket.$new({'url': 'ws://192.168.99.100/ws/_changes', 'protocols': [], 'subprotocols': ['base46'] });
+                ws.$on('$open', function () {
+                    console.log('Oh my gosh, websocket is really open! Fukken awesome!');
+                });
+                ws.$on('$message', function (data) {
+                    console.log('The websocket server has sent data.');
+                    if ($rootScope.indexVM.results !== null) {
+                        $rootScope.now = new Date();
+                        $rootScope.$apply(function() {
+                            for (var i = $rootScope.indexVM.results.hits.hits.length - 1; i >= 0; i--) {
+                                var mam = $rootScope.indexVM.results.hits.hits[i];
+                                if (mam._source.matchId == data._source.matchId) {
+                                    console.log('Updating ' + mam._source.matchId + '!!');
+                                    mam._source = data._source;
+                                }
+                            };
+                        });
+                    }
+                });
+                ws.$on('$close', function () {
+                    console.log('Noooooooooou, I want to have more fun with ngWebsocket, damn it!');
+                });
+        });
+    </script>
+</head>
+<body ng-app="tutorial" eui-index="'mams'"><!-- ACTION: change to index name -->
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-xs-3 sidebar">
+                <h3>Search</h3>
+                <eui-searchbox field="'message'"></eui-searchbox> <!-- ACTION: change to field to search on -->
+                <h3>Single select facet</h3>
+                <eui-singleselect field="'competitionId'" size="5"></eui-singleselect> <!-- ACTION: change to field to use as facet -->
+                <h3>Multi select facet</h3>
+                <eui-checklist field="'season.name'" size="10"></eui-checklist> <!-- ACTION: change to field to use as facet -->
+                <h3>Results Per Page</h3>
+                <select ng-model="indexVM.pageSize">
+                    <option ng-repeat="item in [10, 20, 50, 100]">{{item}}</option>
+                </select>
+            </div>
+            <div class="col-xs-9 col-xs-offset-3 main">
+
+<div eui-sort="ejs.Sort('startat').order('desc')" eui-enabled="true">
+<a ng-click="sorting.enabled=true">Date</a>
+<a ng-click="sorting.enabled=false">Relevance</a>
+</div>
+
+                <h1>Results</h1>
+
+<section class="mam"><div class="match-live-container"><div class="match-live-slider slick-initialized slick-slider">
+                <div aria-live="polite" class="slick-list draggable">
+<div class="slick-track" style="opacity: 1; transform: translate3d(0px, 0px, 0px);" role="listbox">
+                    <div ng-repeat="doc in indexVM.results.hits.hits" ng-animate=" 'animate' ">
+<section class="glide__slide match-live slick-slide slick-current slick-active" id="{{ doc._source.matchId }}" data-slick-index="0" aria-hidden="false" tabindex="0" role="option" aria-describedby="slick-slide00"><em>{{doc._source.season.name}}</em><div class="match-item"><div class="match-home">
+<img ng-if="!doc._source.local.teamId" src="http://cdn.foxsports.com.br/foxsports/live/images/missing-team.png">
+<img ng-if="doc._source.local.teamId" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.local.teamId}}.png">
+<span class="match-team-name">{{doc._source.local.name[0]}}</span>
+</div>
+<div class="match-score" ng-switch ng-if="(doc._source.startat | date:'yyyyMMddHHmm') >= (now | date:'yyyyMMddHHmm')">
+<span class="match-live-time-date">{{ doc._source.startat | date:'H:mm' }} hs</span>
+<span class="match-live-time">{{ doc._source.startat | date:'MMM d' }}</span>
+</div>
+<div class="match-score" ng-switch ng-if="(doc._source.startat | date:'yyyyMMddHHmm') < (now | date:'yyyyMMddHHmm')">
+<span class="match-live-time-date">{{doc._source.local.score}}</span>
+<span class="match-live-time">{{doc._source.visitor.score}}</span>
+</div>
+<div class="match-away">
+<img ng-if="!doc._source.visitor.teamId" src="http://cdn.foxsports.com.br/foxsports/live/images/missing-team.png">
+<img ng-if="doc._source.visitor.teamId" src="http://statistics.ficfiles.com/foxsports-la/escudos/20x20/{{doc._source.visitor.teamId}}.png">
+<span class="match-team-name">{{doc._source.visitor.name[0]}}</span>
+</div></div></section>
+                    </div>
+                </div>
+                </div>
+
+                <eui-simple-paging></eui-simple-paging>
+                </div>
+                </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

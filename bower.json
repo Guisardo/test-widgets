@@ -1,0 +1,14 @@
+{
+  "name": "parser_widgets",
+  "version": "0.0.1",
+  "main": "index.html",
+  "private": true,
+  "dependencies": {
+    "elasticsearch": "~10.1.3",
+    "angular": "~1.3.20",
+    "angular-i18n": "*",
+    "bootstrap": "~3.2.0",
+    "elasticui": "*",
+    "ng-websocket": "~0.2.1"
+  }
+}
